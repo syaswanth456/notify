@@ -56,3 +56,22 @@ function urlBase64ToUint8Array(base64String) {
   const rawData = atob(base64);
   return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
 }
+
+let deferredPrompt;
+
+// Capture install prompt
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+// Trigger install
+async function installApp() {
+  if (!deferredPrompt) {
+    alert("Install not available yet");
+    return;
+  }
+  deferredPrompt.prompt();
+  deferredPrompt = null;
+}
+
