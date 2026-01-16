@@ -1,82 +1,35 @@
-const publicVapidKey = "BMsYkxK0g0izE9IfkQRE8DqnRnPFoo4M1Mim7RgExSkU6ZBIgxoZo0IddHNKjkJI5XlL5_uRBbLf_KVYcYsP55w";
+let deferredPrompt = null;
 
-let registration;
-let deferredPrompt;
-
-/* ===== INSTALL PROMPT ===== */
 window.addEventListener("beforeinstallprompt", e => {
   e.preventDefault();
   deferredPrompt = e;
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("allowBtn").addEventListener("click", requestPermission);
-  document.getElementById("subscribeBtn").addEventListener("click", subscribe);
-  document.getElementById("publishBtn").addEventListener("click", publish);
-  document.getElementById("installBtn").addEventListener("click", installApp);
-});
+// Detect platform
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
 
-/* ===== INSTALL APP ===== */
+function isUnsupportedBrowser() {
+  return !("BeforeInstallPromptEvent" in window);
+}
+
 async function installApp() {
-  if (!deferredPrompt) {
-    alert("Install not available yet");
+  // iOS → manual install
+  if (isIOS()) {
+    alert("On iPhone:\nSafari → Share → Add to Home Screen");
     return;
   }
+
+  // Unsupported browsers (Comet, etc.)
+  if (!deferredPrompt) {
+    alert(
+      "Install not supported in this browser.\n\n" +
+      "Please use Chrome or Edge for app installation."
+    );
+    return;
+  }
+
   deferredPrompt.prompt();
   deferredPrompt = null;
-}
-
-/* ===== PERMISSION ===== */
-async function requestPermission() {
-  const permission = await Notification.requestPermission();
-  alert(permission === "granted" ? "Permission granted" : "Permission denied");
-}
-
-/* ===== SUBSCRIBE ===== */
-async function subscribe() {
-  if (Notification.permission !== "granted") {
-    alert("Allow notifications first");
-    return;
-  }
-
-  const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-
-  registration = await navigator.serviceWorker.register("/sw.js");
-
-  const subscription = await registration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
-  });
-
-  await fetch("/subscribe", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code, subscription })
-  });
-
-  document.getElementById("code").innerText = "Your Code: " + code;
-}
-
-/* ===== PUBLISH ===== */
-async function publish() {
-  const code = document.getElementById("publishCode").value;
-  const title = document.getElementById("title").value;
-  const body = document.getElementById("body").value;
-
-  await fetch("/send-to-code", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code, title, body })
-  });
-}
-
-/* ===== HELPER ===== */
-function urlBase64ToUint8Array(base64String) {
-  const padding = "=".repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
-
-  const rawData = atob(base64);
-  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
 }
