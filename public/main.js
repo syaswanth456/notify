@@ -1,35 +1,61 @@
 let deferredPrompt = null;
+let isInstalled = false;
 
+/* ===== Detect install availability ===== */
 window.addEventListener("beforeinstallprompt", e => {
   e.preventDefault();
   deferredPrompt = e;
+  showInstallButton();
 });
 
-// Detect platform
+window.addEventListener("appinstalled", () => {
+  isInstalled = true;
+  deferredPrompt = null;
+  hideInstallButton();
+});
+
+/* ===== Platform detection ===== */
 function isIOS() {
   return /iphone|ipad|ipod/i.test(navigator.userAgent);
 }
 
-function isUnsupportedBrowser() {
-  return !("BeforeInstallPromptEvent" in window);
+/* ===== UI helpers ===== */
+function showInstallButton() {
+  document.getElementById("installBtn").style.display = "block";
 }
 
+function hideInstallButton() {
+  document.getElementById("installBtn").style.display = "none";
+}
+
+/* ===== Install app ===== */
 async function installApp() {
-  // iOS → manual install
   if (isIOS()) {
-    alert("On iPhone:\nSafari → Share → Add to Home Screen");
+    alert("iPhone:\nSafari → Share → Add to Home Screen");
     return;
   }
 
-  // Unsupported browsers (Comet, etc.)
   if (!deferredPrompt) {
-    alert(
-      "Install not supported in this browser.\n\n" +
-      "Please use Chrome or Edge for app installation."
-    );
+    alert("Install not supported in this browser.\nUse Chrome or Edge.");
     return;
   }
 
   deferredPrompt.prompt();
   deferredPrompt = null;
+  hideInstallButton();
 }
+
+/* ===== Register Service Worker ===== */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js")
+    .then(() => console.log("✅ Service Worker registered"))
+    .catch(err => console.error("❌ SW failed", err));
+}
+
+/* ===== DOM ===== */
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("installBtn").addEventListener("click", installApp);
+  hideInstallButton();
+
+  if (isIOS()) showInstallButton();
+});
