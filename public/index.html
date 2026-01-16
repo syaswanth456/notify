@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Push Notification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+    }
+    button, input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    .code {
+      color: green;
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h3>🔔 Push Notifications</h3>
+
+  <button onclick="requestPermission()">Allow Notifications</button>
+
+  <button onclick="subscribe()">Subscribe & Generate Code</button>
+  <div id="code" class="code"></div>
+
+  <hr>
+
+  <input id="publishCode" placeholder="Enter Code" />
+  <input id="title" placeholder="Notification Title" />
+  <input id="body" placeholder="Notification Message" />
+
+  <button onclick="publish()">Publish Notification</button>
+
+  <script src="main.js"></script>
+</body>
+</html>
