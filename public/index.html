@@ -3,14 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My PWA App</title>
+  <title>PWA Push App</title>
 
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#317EFB">
 </head>
 <body>
 
-  <h1>Hello PWA 🌐</h1>
+  <h2>🔔 PWA Push Notifications</h2>
+
+  <button id="allowBtn">Allow Notifications</button>
+  <button id="subscribeBtn">Subscribe & Generate Code</button>
+
+  <p id="code"></p>
+
+  <hr>
+
+  <input id="publishCode" placeholder="Enter Code">
+  <input id="title" placeholder="Notification Title">
+  <input id="body" placeholder="Notification Body">
+  <button id="publishBtn">Send Notification</button>
+
+  <hr>
 
   <button id="installBtn">📲 Install App</button>
 
