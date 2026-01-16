@@ -1,8 +1,31 @@
-self.addEventListener("push", event => {
-  const data = event.data.json();
+const CACHE_NAME = "pwa-cache-v1";
+const ASSETS = [
+  "/",
+  "/index.html",
+  "/main.js",
+  "/manifest.json"
+];
 
-  self.registration.showNotification(data.title, {
-    body: data.body,
-    icon: "https://cdn-icons-png.flaticon.com/512/1827/1827392.png"
-  });
+self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.map(key => key !== CACHE_NAME && caches.delete(key))
+      )
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener("fetch", event => {
+  event.respondWith(
+    caches.match(event.request).then(res => res || fetch(event.request))
+  );
 });
