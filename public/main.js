@@ -1,4 +1,4 @@
-const publicVapidKey = "PASTE_PUBLIC_VAPID_KEY";
+const publicVapidKey = "BMsYkxK0g0izE9IfkQRE8DqnRnPFoo4M1Mim7RgExSkU6ZBIgxoZo0IddHNKjkJI5XlL5_uRBbLf_KVYcYsP55w";
 
 let registration;
 let deferredPrompt = null;
