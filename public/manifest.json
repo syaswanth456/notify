@@ -1,10 +1,10 @@
 {
-  "name": "Notify App",
-  "short_name": "Notify",
+  "name": "My PWA App",
+  "short_name": "PWA",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "theme_color": "#317EFB",
   "icons": [
     {
       "src": "/icon-192.png",
